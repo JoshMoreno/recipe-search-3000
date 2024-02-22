@@ -1,3 +1,27 @@
+# Notes on Recipe Search 3000
+![Screenshot](/screenshot.png)
+
+## Database Seeder
+To test the app, run the database seeder.
+```bash
+./vendor/bin/sail artisan db:seed
+```
+
+I intentionally reused a handful of email addresses and ingredients to help make testing easier for both you and I (e.g. search for `salmon` in ingredients). The descriptions and steps are just lorem ipsum.
+
+## Feature Tests
+I wrote some tests to ensure that the recipe search functionality and recipe detail both work as expected.
+
+Run `./vendor/bin/sail test` to run the tests.
+
+## API Base URL
+If you're laravel app isn't running on the default `http://localhost:8888`, you can update the value in `frontend/nuxt.config.ts`
+
+## Nuxt SSR Disabled
+Nuxt's SSR wasn't able to connect to the Laravel API for some reason, so I ended up disabling it for the sake of time.
+
+======================================================
+
 ## Getting started
 
 ### Pre-requisites
