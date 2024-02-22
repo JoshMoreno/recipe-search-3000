@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Recipe;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class RecipeSearchTest extends TestCase
@@ -37,8 +38,12 @@ class RecipeSearchTest extends TestCase
 
         $response = $this->getJson("/api/recipes?email=$email");
 
-        $response->assertOk();
-        $response->assertJsonCount(1, 'data');
-        $response->assertJsonFragment(['author_email' => $email]);
+        $response->assertOk()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('data', 1)
+                ->where('data.0.author_email', $email)
+                ->etc()
+            );
+    }
     }
 }
