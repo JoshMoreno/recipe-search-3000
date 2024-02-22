@@ -27,6 +27,10 @@ class RecipeController extends Controller
             });
         }
 
+        if ($request->has('ingredient')) {
+            $query->whereRelation('ingredients', 'name', 'LIKE', "%{$request->ingredient}%");
+        }
+
         return $query->paginate(10);
     }
 }

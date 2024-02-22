@@ -94,4 +94,37 @@ class RecipeSearchTest extends TestCase
                 ->etc()
             );
     }
+
+    public function testItSearchesByIngredient(): void
+    {
+        $recipe1 = Recipe::factory()
+            ->hasIngredients(3, ['name' => 'large potatoes'])
+            ->hasSteps(3)
+            ->create();
+
+        // inserting in the middle just to rule out ordering leading to false positives
+        Recipe::factory(10, [
+            'name' => 'Not a match - potato',
+            'description' => 'Not a match - potato',
+        ])
+            ->hasIngredients(3, ['name' => 'Not a match'])
+            ->hasSteps(3, ['description' => 'Not a match - potato'])
+            ->create();
+
+        $recipe2 = Recipe::factory()
+            ->hasIngredients(3, ['name' => 'potato'])
+            ->hasSteps(3)
+            ->create();
+
+        $response = $this->getJson('/api/recipes?ingredient=potato');
+
+        $response
+            ->assertOk()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('data', 2)
+                ->where('data.0.id', $recipe1->id)
+                ->where('data.1.id', $recipe2->id)
+                ->etc()
+            );
+    }
 }
