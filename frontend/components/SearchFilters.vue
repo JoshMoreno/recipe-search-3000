@@ -1,10 +1,11 @@
 <script setup lang="ts">
     const router = useRouter()
+    const route = useRoute()
 
     const form = ref({
-        email: '',
-        keyword: '',
-        ingredient: '',
+        email: route.query.email || '',
+        keyword: route.query.keyword || '',
+        ingredient: route.query.ingredient || '',
     })
 
     function handleSubmit() {
