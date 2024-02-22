@@ -141,4 +141,24 @@ class RecipeSearchTest extends TestCase
 
         $response->assertJsonCount(10, 'data');
     }
+
+    public function testItPaginatesBy10(): void
+    {
+        Recipe::factory(20)
+            ->hasIngredients(3)
+            ->hasSteps(3)
+            ->create();
+
+        $response = $this->getJson('/api/recipes');
+
+        $response->assertJson(function (AssertableJson $json) {
+            return $json
+                ->count('data', 10)
+                ->where('per_page', 10)
+                ->has('links')
+                ->has('current_page')
+                ->etc();
+        }
+        );
+    }
 }
