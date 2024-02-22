@@ -153,8 +153,8 @@ class RecipeSearchTest extends TestCase
 
         $response->assertJson(function (AssertableJson $json) {
             return $json
-                ->count('data', 10)
-                ->where('per_page', 10)
+                ->count('data', 12)
+                ->where('per_page', 12)
                 ->has('links')
                 ->has('current_page')
                 ->etc();

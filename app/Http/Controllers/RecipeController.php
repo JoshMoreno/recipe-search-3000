@@ -38,7 +38,7 @@ class RecipeController extends Controller
             $query->whereRelation('ingredients', 'name', 'LIKE', "%{$validated['ingredient']}%");
         }
 
-        return $query->paginate(10);
+        return $query->paginate(12);
     }
 
     public function show(Recipe $recipe)
