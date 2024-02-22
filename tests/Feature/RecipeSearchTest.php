@@ -48,14 +48,14 @@ class RecipeSearchTest extends TestCase
 
     public function testItSearchesByKeywordInNameDescriptionIngredientsAndSteps(): void
     {
-        Recipe::factory()
+        $recipe1 = Recipe::factory()
             ->hasIngredients(3)
             ->hasSteps(3)
             ->create([
                 'name' => 'Scallop Salad',
             ]);
 
-        Recipe::factory()
+        $recipe2 = Recipe::factory()
             ->hasIngredients(3)
             ->hasSteps(3)
             ->create([
@@ -71,15 +71,15 @@ class RecipeSearchTest extends TestCase
             ->hasSteps(3, ['description' => 'Not a match'])
             ->create();
 
-        Recipe::factory()
+        $recipe3 = Recipe::factory()
             ->hasIngredients(3, ['name' => 'large scallops'])
             ->hasSteps(3)
-            ->create(['name' => 'Match 3']);
+            ->create();
 
-        Recipe::factory()
+        $recipe4 = Recipe::factory()
             ->hasIngredients(3)
             ->hasSteps(3, ['description' => 'Boil the scallops'])
-            ->create(['name' => 'Match 4']);
+            ->create();
 
         $response = $this->getJson('/api/recipes?keyword=scallop');
 
@@ -87,10 +87,12 @@ class RecipeSearchTest extends TestCase
             ->assertOk()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->has('data', 4)
+                ->where('data.0.id', $recipe1->id)
                 ->where('data.0.name', 'Scallop Salad')
+                ->where('data.1.id', $recipe2->id)
                 ->where('data.1.description', 'This is the best scallop recipe ever!')
-                ->where('data.2.name', 'Match 3')
-                ->where('data.3.name', 'Match 4')
+                ->where('data.2.id', $recipe3->id)
+                ->where('data.3.id', $recipe4->id)
                 ->etc()
             );
     }
