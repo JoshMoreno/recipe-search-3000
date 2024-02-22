@@ -13,12 +13,18 @@ class RecipeController extends Controller
     {
         $query = Recipe::query();
 
-        if ($request->has('email')) {
-            $query->where('author_email', $request->email);
+        $validated = $request->validate([
+            'email' => 'nullable|string',
+            'keyword' => 'nullable|string',
+            'ingredient' => 'nullable|string',
+        ]);
+
+        if ($validated['email'] ?? '') {
+            $query->where('author_email', $validated['email']);
         }
 
-        if ($request->has('keyword')) {
-            $searchValue = "%{$request->keyword}%";
+        if ($validated['keyword'] ?? '') {
+            $searchValue = "%{$validated['keyword']}%";
 
             $query->where(function (Builder $query) use ($searchValue) {
                 return $query->where('name', 'LIKE', $searchValue)
@@ -28,8 +34,8 @@ class RecipeController extends Controller
             });
         }
 
-        if ($request->has('ingredient')) {
-            $query->whereRelation('ingredients', 'name', 'LIKE', "%{$request->ingredient}%");
+        if ($validated['ingredient'] ?? '') {
+            $query->whereRelation('ingredients', 'name', 'LIKE', "%{$validated['ingredient']}%");
         }
 
         return $query->paginate(10);
