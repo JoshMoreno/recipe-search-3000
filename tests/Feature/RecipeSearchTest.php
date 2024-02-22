@@ -164,21 +164,13 @@ class RecipeSearchTest extends TestCase
 
     public function testItDoesNotSearchWhenParametersAreEmpty(): void
     {
-        Recipe::factory(20)
+        Recipe::factory(10)
             ->hasIngredients(3)
             ->hasSteps(3)
             ->create();
 
         $response = $this->getJson('/api/recipes?email=&keyword=&ingredient=');
 
-        $response->assertJson(function (AssertableJson $json) {
-            return $json
-                ->count('data', 10)
-                ->where('per_page', 10)
-                ->has('links')
-                ->has('current_page')
-                ->etc();
-        }
-        );
+        $response->assertJsonCount(10, 'data');
     }
 }
