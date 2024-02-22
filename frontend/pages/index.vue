@@ -3,17 +3,22 @@
 
     const config = useRuntimeConfig()
     const route = useRoute()
-    const page = computed(() => route.query.page || 1)
     let responseData = ref<FetchRecipesResponse | null>(null)
     const recipes = computed(() => responseData.value?.data)
 
+    const queryParams = computed(() => {
+        return {
+            page: route.query.page || 1,
+            email: route.query.email || '',
+            keyword: route.query.keyword || '',
+            ingredient: route.query.ingredient || '',
+        }
+    })
 
     async function fetchRecipes(){
         const {data, error} = await useFetch<FetchRecipesResponse>('/recipes', {
             baseURL: config.public.apiBase,
-            query: {
-                page: page.value
-            }
+            query: queryParams.value,
         })
 
         responseData.value = data.value
@@ -25,15 +30,17 @@
 
     await fetchRecipes()
 
-    watch(page, async () => {
+    watch(queryParams, async () => {
         await fetchRecipes()
         window.scrollTo(0, 0)
-
     })
 </script>
 
 <template>
     <div class="container px-4 mx-auto mt-8 mb-16">
+        <div class="bg-gray-100 p-6 rounded-lg mb-12">
+            <SearchFilters class="mx-auto"/>
+        </div>
         <div v-if="!recipes || !recipes.length">
             No recipes found
         </div>
