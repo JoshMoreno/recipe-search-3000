@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Recipe;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
@@ -32,5 +33,15 @@ class RecipeController extends Controller
         }
 
         return $query->paginate(10);
+    }
+
+    public function show(Recipe $recipe)
+    {
+        return $recipe->load([
+            'steps' => function (HasMany $query) {
+                $query->orderBy('order');
+            },
+            'ingredients',
+        ]);
     }
 }
