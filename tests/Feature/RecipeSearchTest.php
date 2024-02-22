@@ -129,4 +129,16 @@ class RecipeSearchTest extends TestCase
                 ->etc()
             );
     }
+
+    public function testItDoesNotSearchWithoutArguments(): void
+    {
+        Recipe::factory(10)
+            ->hasIngredients(3)
+            ->hasSteps(3)
+            ->create();
+
+        $response = $this->getJson('/api/recipes');
+
+        $response->assertJsonCount(10, 'data');
+    }
 }
